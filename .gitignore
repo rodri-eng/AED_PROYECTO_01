@@ -1,0 +1,11 @@
+# CLion y compilación CMake
+cmake-build-*/
+.idea/
+*.o
+*.exe
+
+# Python y Manim
+__pycache__/
+media/
+*.pyc
+.venv/

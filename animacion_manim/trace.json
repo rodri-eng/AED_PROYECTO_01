@@ -1,0 +1,119 @@
+[
+  {
+    "step": 1,
+    "op": "ERROR_POP",
+    "value": null,
+    "stack_in": [],
+    "stack_out": [],
+    "total_agg": null,
+    "desc": "Caso borde: intento de pop() en cola vacia"
+  },
+  {
+    "step": 2,
+    "op": "PUSH",
+    "value": 8,
+    "stack_in": [{"val": 8, "acc": 8}],
+    "stack_out": [],
+    "total_agg": 8,
+    "desc": "Push(8): ingresa a _stack_in con acumulado 8"
+  },
+  {
+    "step": 3,
+    "op": "PUSH",
+    "value": 3,
+    "stack_in": [{"val": 8, "acc": 8}, {"val": 3, "acc": 3}],
+    "stack_out": [],
+    "total_agg": 3,
+    "desc": "Push(3): ingresa a _stack_in con acumulado 3"
+  },
+  {
+    "step": 4,
+    "op": "PUSH",
+    "value": 5,
+    "stack_in": [{"val": 8, "acc": 8}, {"val": 3, "acc": 3}, {"val": 5, "acc": 3}],
+    "stack_out": [],
+    "total_agg": 3,
+    "desc": "Push(5): ingresa a _stack_in con acumulado 3"
+  },
+  {
+    "step": 5,
+    "op": "START_TRANSFER",
+    "value": null,
+    "stack_in": [{"val": 8, "acc": 8}, {"val": 3, "acc": 3}, {"val": 5, "acc": 3}],
+    "stack_out": [],
+    "total_agg": 3,
+    "desc": "_stack_out vacia: traspasando elementos invirtiendo acumulados"
+  },
+  {
+    "step": 6,
+    "op": "END_TRANSFER",
+    "value": null,
+    "stack_in": [],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}, {"val": 8, "acc": 3}],
+    "total_agg": 3,
+    "desc": "Traspaso finalizado. Elementos listos para salir por _stack_out"
+  },
+  {
+    "step": 7,
+    "op": "POP",
+    "value": 8,
+    "stack_in": [],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}],
+    "total_agg": 3,
+    "desc": "Pop(): sale 8 del frente de la cola"
+  },
+  {
+    "step": 8,
+    "op": "PUSH",
+    "value": 2,
+    "stack_in": [{"val": 2, "acc": 2}],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}],
+    "total_agg": 2,
+    "desc": "Push(2): ingresa a _stack_in con acumulado 2"
+  },
+  {
+    "step": 9,
+    "op": "POP",
+    "value": 3,
+    "stack_in": [{"val": 2, "acc": 2}],
+    "stack_out": [{"val": 5, "acc": 5}],
+    "total_agg": 2,
+    "desc": "Pop(): sale 3 del frente de la cola"
+  },
+  {
+    "step": 10,
+    "op": "POP",
+    "value": 5,
+    "stack_in": [{"val": 2, "acc": 2}],
+    "stack_out": [],
+    "total_agg": 2,
+    "desc": "Pop(): sale 5 del frente de la cola"
+  },
+  {
+    "step": 11,
+    "op": "START_TRANSFER",
+    "value": null,
+    "stack_in": [{"val": 2, "acc": 2}],
+    "stack_out": [],
+    "total_agg": 2,
+    "desc": "_stack_out vacia: traspasando elementos invirtiendo acumulados"
+  },
+  {
+    "step": 12,
+    "op": "END_TRANSFER",
+    "value": null,
+    "stack_in": [],
+    "stack_out": [{"val": 2, "acc": 2}],
+    "total_agg": 2,
+    "desc": "Traspaso finalizado. Elementos listos para salir por _stack_out"
+  },
+  {
+    "step": 13,
+    "op": "POP",
+    "value": 2,
+    "stack_in": [],
+    "stack_out": [],
+    "total_agg": null,
+    "desc": "Pop(): sale 2 del frente de la cola"
+  }
+]
