@@ -1,5 +1,6 @@
 import json
 import os
+import textwrap
 from manim import *
 
 
@@ -18,7 +19,7 @@ class AssociativeQueueScene(Scene):
         ).next_to(title, DOWN)
 
         authors = Text(
-            "Integrantes: Huertos Ochoa Rodrigo Franco - Ramos Vargas Royer Sebastian",
+            "Integrantes: \nRamos Vargas Royer Sebastian \nHuertos Ochoa Rodrigo Franco \nDiego Antonio Rosario Palomino",
             font_size=20,
             color=WHITE
         ).next_to(subtitle, DOWN, buff=0.5)
@@ -31,6 +32,20 @@ class AssociativeQueueScene(Scene):
             FadeOut(authors),
             title.animate.scale(0.7).to_corner(UL, buff=0.4)
         )
+
+        # Introducción conceptual
+        intro = VGroup(
+            Text("Una Associative Queue es una cola FIFO.", font_size=28),
+            Text("push agrega al final; pop retira del frente.", font_size=25),
+            Text("Acc = mínimo parcial guardado en cada pila.", font_size=25),
+            Text("query obtiene el agregado de todos sus elementos.", font_size=25),
+            Text("min(min(a, b), c) = min(a, min(b, c))", font_size=24, color=YELLOW),
+            Text("Ejemplo: hallar el mínimo de una ventana de datos.", font_size=25),
+        ).arrange(DOWN, buff=0.35).move_to(ORIGIN)
+
+        self.play(FadeIn(intro))
+        self.wait(7)
+        self.play(FadeOut(intro))
 
         json_path = os.path.join(os.path.dirname(__file__), "trace.json")
 
@@ -135,10 +150,10 @@ class AssociativeQueueScene(Scene):
             total_agg = step["total_agg"]
 
             new_desc = Text(
-                desc,
+                textwrap.fill(desc, width=55, break_long_words=False),
                 font_size=18,
                 color=LIGHT_GRAY
-            ).to_edge(DOWN, buff=0.4)
+            ).to_edge(DOWN, buff=0.25)
 
             new_agg_str = str(total_agg) if total_agg is not None else "--"
 
@@ -171,7 +186,8 @@ class AssociativeQueueScene(Scene):
                 idx = len(in_data) - 1
                 target_pos = box_in.get_bottom() + UP * (0.45 + idx * 0.7)
 
-                elem_mob.move_to(box_in.get_top() + UP * 0.5)
+                # La tarjeta aparece dentro de la pila, debajo del rótulo.
+                elem_mob.move_to(box_in.get_top() + DOWN * 0.45)
 
                 self.play(*anim_list, FadeIn(elem_mob), run_time=0.4)
                 self.play(elem_mob.animate.move_to(target_pos), run_time=0.6)
@@ -181,39 +197,61 @@ class AssociativeQueueScene(Scene):
             elif op == "START_TRANSFER":
                 self.play(*anim_list, run_time=0.8)
 
-            elif op == "END_TRANSFER":
+            elif op == "TRANSFER_ITEM":
+                # El último objeto de IN representa el tope que acaba de salir.
+                moving_mob = current_in_mobjects.pop()
+
                 out_data = step["stack_out"]
-                new_out_mobjects = []
+                transferred = out_data[-1]
+                idx = len(out_data) - 1
 
-                for idx, item in enumerate(out_data):
-                    updated_mob = make_element(
-                        item["val"],
-                        item["acc"],
-                        TEAL
-                    )
-                    target_pos = box_out.get_bottom() + UP * (0.45 + idx * 0.7)
-                    updated_mob.move_to(target_pos)
-                    new_out_mobjects.append(updated_mob)
+                target_pos = box_out.get_bottom() + UP * (0.45 + idx * 0.7)
 
-                if current_in_mobjects:
-                    self.play(
-                        *anim_list,
-                        *[FadeOut(m) for m in current_in_mobjects],
-                        *[FadeIn(m) for m in new_out_mobjects],
-                        run_time=1.0,
-                    )
-                else:
-                    self.play(*anim_list, run_time=0.5)
+                target_mob = make_element(
+                    transferred["val"],
+                    transferred["acc"],
+                    TEAL
+                ).move_to(target_pos)
 
-                current_in_mobjects.clear()
-                current_out_mobjects = new_out_mobjects
+                self.play(
+                    *anim_list,
+                    Transform(moving_mob, target_mob),
+                    run_time=1.2
+                )
+
+                current_out_mobjects.append(moving_mob)
+
+            elif op == "END_TRANSFER":
+                self.play(*anim_list, run_time=0.5)
+
+            elif op == "QUERY":
+                out_acc = step["stack_out"][-1]["acc"]
+                in_acc = step["stack_in"][-1]["acc"]
+
+                formula = Text(
+                    f"min({out_acc}, {in_acc}) = {total_agg}",
+                    font_size=26,
+                    color=YELLOW
+                ).move_to(ORIGIN)
+
+                self.play(
+                    *anim_list,
+                    Indicate(current_out_mobjects[-1]),
+                    Indicate(current_in_mobjects[-1]),
+                    run_time=1.2
+                )
+                self.play(FadeIn(formula))
+                self.wait(2)
+                self.play(FadeOut(formula))
 
             elif op == "POP":
                 if current_out_mobjects:
                     popped_mob = current_out_mobjects.pop()
                     self.play(
                         *anim_list,
-                        popped_mob.animate.shift(RIGHT * 1.8 + UP * 0.4).set_opacity(0),
+                        popped_mob.animate.shift(
+                            RIGHT * 1.8 + UP * 0.4
+                        ).set_opacity(0),
                         run_time=0.8,
                     )
                     self.remove(popped_mob)
@@ -240,12 +278,12 @@ class AssociativeQueueScene(Scene):
         ).shift(UP * 2)
 
         c1 = Text(
-            "- Push: O(1) amortizado",
+            "- Push: O(1) en cada operación",
             font_size=22
         ).next_to(complexity_title, DOWN, buff=0.4).align_to(complexity_title, LEFT)
 
         c2 = Text(
-            "- Pop: O(1) amortizado",
+            "- Pop: O(n) en el peor caso; O(1) amortizado",
             font_size=22
         ).next_to(c1, DOWN, buff=0.3).align_to(c1, LEFT)
 

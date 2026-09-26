@@ -46,6 +46,33 @@
   },
   {
     "step": 6,
+    "op": "TRANSFER_ITEM",
+    "value": 5,
+    "stack_in": [{"val": 8, "acc": 8}, {"val": 3, "acc": 3}],
+    "stack_out": [{"val": 5, "acc": 5}],
+    "total_agg": 3,
+    "desc": "Se transfiere 5 a _stack_out; acumulado = 5"
+  },
+  {
+    "step": 7,
+    "op": "TRANSFER_ITEM",
+    "value": 3,
+    "stack_in": [{"val": 8, "acc": 8}],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}],
+    "total_agg": 3,
+    "desc": "Se transfiere 3 a _stack_out; acumulado = 3"
+  },
+  {
+    "step": 8,
+    "op": "TRANSFER_ITEM",
+    "value": 8,
+    "stack_in": [],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}, {"val": 8, "acc": 3}],
+    "total_agg": 3,
+    "desc": "Se transfiere 8 a _stack_out; acumulado = 3"
+  },
+  {
+    "step": 9,
     "op": "END_TRANSFER",
     "value": null,
     "stack_in": [],
@@ -54,7 +81,7 @@
     "desc": "Traspaso finalizado. Elementos listos para salir por _stack_out"
   },
   {
-    "step": 7,
+    "step": 10,
     "op": "POP",
     "value": 8,
     "stack_in": [],
@@ -63,7 +90,7 @@
     "desc": "Pop(): sale 8 del frente de la cola"
   },
   {
-    "step": 8,
+    "step": 11,
     "op": "PUSH",
     "value": 2,
     "stack_in": [{"val": 2, "acc": 2}],
@@ -72,7 +99,16 @@
     "desc": "Push(2): ingresa a _stack_in con acumulado 2"
   },
   {
-    "step": 9,
+    "step": 12,
+    "op": "QUERY",
+    "value": null,
+    "stack_in": [{"val": 2, "acc": 2}],
+    "stack_out": [{"val": 5, "acc": 5}, {"val": 3, "acc": 3}],
+    "total_agg": 2,
+    "desc": "Query(): minimo de todos los elementos = 2"
+  },
+  {
+    "step": 13,
     "op": "POP",
     "value": 3,
     "stack_in": [{"val": 2, "acc": 2}],
@@ -81,7 +117,7 @@
     "desc": "Pop(): sale 3 del frente de la cola"
   },
   {
-    "step": 10,
+    "step": 14,
     "op": "POP",
     "value": 5,
     "stack_in": [{"val": 2, "acc": 2}],
@@ -90,7 +126,7 @@
     "desc": "Pop(): sale 5 del frente de la cola"
   },
   {
-    "step": 11,
+    "step": 15,
     "op": "START_TRANSFER",
     "value": null,
     "stack_in": [{"val": 2, "acc": 2}],
@@ -99,7 +135,16 @@
     "desc": "_stack_out vacia: traspasando elementos invirtiendo acumulados"
   },
   {
-    "step": 12,
+    "step": 16,
+    "op": "TRANSFER_ITEM",
+    "value": 2,
+    "stack_in": [],
+    "stack_out": [{"val": 2, "acc": 2}],
+    "total_agg": 2,
+    "desc": "Se transfiere 2 a _stack_out; acumulado = 2"
+  },
+  {
+    "step": 17,
     "op": "END_TRANSFER",
     "value": null,
     "stack_in": [],
@@ -108,7 +153,7 @@
     "desc": "Traspaso finalizado. Elementos listos para salir por _stack_out"
   },
   {
-    "step": 13,
+    "step": 18,
     "op": "POP",
     "value": 2,
     "stack_in": [],
