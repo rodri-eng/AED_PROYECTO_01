@@ -2,7 +2,7 @@
 
 Proyecto educativo para el curso **CS2023 Algoritmos y Estructuras de Datos (2026-2)** de la **Universidad de Ingeniería y Tecnología (UTEC)**.
 
-Este proyecto implementa y anima una **Associative Queue (Sliding Window Aggregation - SWAG)** utilizando una implementación real en **C++17** y una animación programática generada con **Manim Community Edition (Python)**, siguiendo el estilo visual pedagógico de **3Blue1Brown**.
+Este proyecto implementa y anima una **Associative Queue (Sliding Window Aggregation - SWAG)** utilizando una implementación real en **C++20** y una animación programática generada con **Manim Community Edition (Python)**, siguiendo el estilo visual pedagógico de **3Blue1Brown**.
 
 La animación se alimenta de una traza de ejecución (`trace.json`) generada por el programa en C++, garantizando que todas las operaciones mostradas correspondan al comportamiento real de la estructura de datos.
 
@@ -10,18 +10,18 @@ La animación se alimenta de una traza de ejecución (`trace.json`) generada por
 
 # Integrantes e Información Institucional
 
-| Información     | Detalle                                                          |
-| :-------------- | :--------------------------------------------------------------- |
-| **Institución** | Universidad de Ingeniería y Tecnología (UTEC)                    |
-| **Curso**       | CS2023 Algoritmos y Estructuras de Datos[cite: 1]                |
-| **Docente**     | Prof. Víctor Racsó Galván Oyola (`vgalvan@utec.edu.pe`)[cite: 1] |
-| **Integrantes** | Huertos Ochoa, Rodrigo Franco • Ramos Vargas, Royer Sebastian    |
+| Información     | Detalle                                                                                        |
+| :-------------- | :--------------------------------------------------------------------------------------------- |
+| **Institución** | Universidad de Ingeniería y Tecnología (UTEC)                                                  |
+| **Curso**       | CS2023 Algoritmos y Estructuras de Datos                                                       |
+| **Docente**     | Prof. Víctor Racsó Galván Oyola (`vgalvan@utec.edu.pe`)                                        |
+| **Integrantes** | Huertos Ochoa, Rodrigo Franco • Ramos Vargas, Royer Sebastian Diego • Antonio Rosario Palomino |
 
 ---
 
 # ¿Qué es una Associative Queue?
 
-Una **Associative Queue** es una cola FIFO que permite consultar en tiempo constante **O(1)** el resultado de aplicar una operación asociativa binaria **(⊕)** sobre todos los elementos actualmente almacenados:
+Una **Associative Queue** es una cola FIFO que, además de insertar al final y retirar del frente, permite consultar el resultado de aplicar una operación asociativa binaria **(⊕)** a sus elementos en orden **front → back**. La implementación con dos pilas acumulativas responde esa consulta en **O(1)**:
 
 ```math
 \text{query}() = x_1 \oplus x_2 \oplus \dots \oplus x_n
@@ -29,7 +29,7 @@ Una **Associative Queue** es una cola FIFO que permite consultar en tiempo const
 
 ### Propiedad de Asociatividad
 
-La operación utilizada debe satisfacer la propiedad asociativa[cite: 1]:
+La operación utilizada debe satisfacer la propiedad asociativa:
 
 ```math
 (a \oplus b) \oplus c = a \oplus (b \oplus c)
@@ -43,13 +43,13 @@ La operación utilizada debe satisfacer la propiedad asociativa[cite: 1]:
 | Mínimo (min)               |     Sí     |
 | Máximo Común Divisor (gcd) |     Sí     |
 
-En esta implementación se utiliza la función de mínimo (**min**) como caso de estudio demostrativo.
+En esta implementación se utiliza la función de mínimo (**min**) como caso de estudio. Por ejemplo, para la cola `[8, 3, 5]`, `query()` devuelve `min(min(8, 3), 5) = 3`. Aunque `min` no depende del orden, la implementación combina los acumulados de salida antes que los de entrada para respetar el orden de la cola con otras operaciones asociativas.
 
 ---
 
 # Funcionamiento Interno del SWAG
 
-La estructura se implementa mediante **dos pilas enlazadas dinámicamente**, sin utilizar `std::stack`, `std::queue` ni `std::vector`, respetando la gestión manual de memoria enlazada[cite: 1, 7, 8].
+La cola se implementa mediante dos pilas de nodos enlazados, sin usar `std::stack` ni `std::queue`. Se usa `std::vector` únicamente para copiar los estados de las pilas que se exportan a `trace.json`; los elementos de la cola se almacenan en los nodos enlazados.
 
 ## Arquitectura Lógica
 
@@ -71,7 +71,7 @@ La estructura se implementa mediante **dos pilas enlazadas dinámicamente**, sin
 
 ## Pila de Entrada (`_stack_in`)
 
-Recibe los nuevos elementos mediante `push(x)`. Cada nodo almacena su valor y el acumulado parcial calculado desde el fondo hasta dicho nodo[cite: 7]:
+Recibe los nuevos elementos mediante `push(x)`. Cada nodo almacena su valor y el acumulado parcial calculado desde el fondo hasta dicho nodo:
 
 ```math
 acc = acc_{anterior} \oplus valor
@@ -79,7 +79,7 @@ acc = acc_{anterior} \oplus valor
 
 ## Pila de Salida (`_stack_out`)
 
-Desde donde se extraen los elementos mediante `pop()`. Cuando `_stack_out` queda vacía y se solicita una extracción, todos los elementos de `_stack_in` se transfieren invirtiendo el orden y recalculando los acumulados[cite: 7]:
+Desde donde se extraen los elementos mediante `pop()`. Cuando `_stack_out` queda vacía y se solicita una extracción, todos los elementos de `_stack_in` se transfieren invirtiendo el orden y recalculando los acumulados:
 
 ```math
 acc = valor \oplus acc_{anterior}
@@ -119,7 +119,7 @@ resultado = tope(\_stack\_out).acc \oplus tope(\_stack\_in).acc
                Animación MP4
 ```
 
-La animación **no simula valores a mano**: cada transformación visual proviene estrictamente del archivo `trace.json` emitido por el motor de C++[cite: 1].
+Los valores y los estados de las pilas mostrados por la animación provienen de `trace.json`, emitido por el motor de C++. Manim utiliza esos eventos para generar los movimientos y las explicaciones visuales.
 
 ---
 
@@ -139,16 +139,15 @@ proyecto_01/
 │   ├── trace.json              # Registro de estados generado por C++
 │   └── requirements.txt        # Dependencias de Python (manim)
 │
-├── animacion_video/            # Directorio destino del video final exportado
 ├── .gitignore                  # Exclusiones de Git (builds, cache, temporales)
-└── README.md                   # Documentación técnica del proyecto
+└── README.MD                   # Documentación técnica del proyecto
 ```
 
 ---
 
 # Requisitos del Sistema
 
-- **Compilador C++:** Compatible con **C++17** (`g++`, `clang++` o MSVC) y **CMake 3.20+**.
+- **Compilador C++:** Compatible con **C++20** (`g++`, `clang++` o MSVC) y **CMake 4.0+**.
 - **Python:** Versión **3.9 o superior**.
 - **FFmpeg:** Requerido por Manim para la codificación y exportación de video.
 
@@ -188,7 +187,7 @@ brew install ffmpeg
 ```bash
 cd implementacion_cpp
 
-g++ -std=c++17 main.cpp -o engine
+g++ -std=c++20 main.cpp -o engine
 
 ./engine ../animacion_manim/trace.json
 ```
@@ -213,7 +212,7 @@ manim -pql scenes.py AssociativeQueueScene
 
 _(La bandera `-p` abre el reproductor predeterminado al terminar)._
 
-### Renderizado final en alta definición (1080p a 60 fps)
+### Renderizado final en alta definición
 
 ```bash
 manim -pqh scenes.py AssociativeQueueScene
@@ -229,7 +228,7 @@ animacion_manim/media/videos/scenes/1080p60/AssociativeQueueScene.mp4
 
 # Formato del Archivo `trace.json`
 
-Cada operación genera un estado completo de la estructura para desacoplar el motor algorítmico del motor gráfico[cite: 1, 6]:
+Los eventos registrados incluyen estados de la estructura para desacoplar el motor algorítmico del motor gráfico:
 
 ```json
 {
@@ -247,40 +246,36 @@ Cada operación genera un estado completo de la estructura para desacoplar el mo
 
 # Análisis de Complejidad Temporal y Espacial
 
-| Operación            | Complejidad         | Justificación                                                                                                                           |
-| :------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| `push(x)`            | **O(1)** amortizado | Crea un nodo al tope de `_stack_in` y calcula el acumulado con el nodo previo en tiempo constante.[cite: 7]                             |
-| `pop()`              | **O(1)** amortizado | Retira el nodo del tope de `_stack_out` en O(1). La transferencia de **N** elementos se distribuye uniformemente en el tiempo.[cite: 7] |
-| `query()` / `fold()` | **O(1)** estricto   | Combina a lo sumo los acumulados ya calculados en los topes de ambas pilas[cite: 1].                                                    |
-| Espacio de memoria   | **O(N)**            | Cada elemento ocupa un nodo dinámico con campos `val`, `acc` y puntero `next`.[cite: 7]                                                 |
+Las siguientes cotas describen **la estructura de datos**, sin contar la copia de estados para `trace.json` ni el renderizado de Manim.
 
----
+| Operación | Complejidad                                                     | Justificación                                                                       |
+| :-------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `push(x)` | **O(1)** por operación                                          | Inserta un nodo y calcula su acumulado usando el tope previo.                       |
+| `pop()`   | **O(n)** en el peor caso de una extracción; **O(1) amortizado** | Si la pila de salida está vacía, transfiere los elementos desde la pila de entrada. |
+| `query()` | **O(1)** por operación                                          | Consulta y combina, como máximo, los acumulados de los dos topes.                   |
+| Espacio   | **O(n)**                                                        | Cada elemento ocupa un nodo con valor, acumulado y puntero.                         |
 
-## Justificación del Costo Amortizado
+La generación de la traza añade trabajo: `to_vector()` recorre las pilas y `TraceLogger` almacena copias de sus estados. Por ello, las cotas anteriores **no describen el tiempo total de los métodos instrumentados** que generan el video.
 
-Aunque la transferencia entre pilas toma tiempo **O(N)** en el peor caso puntual, cada elemento insertado experimenta exactamente tres operaciones a lo largo de su ciclo de vida:
+## Justificación del Costo Amortizado de `pop()`
 
-1. Inserción en `_stack_in` (**O(1)**).
-2. Transferencia única a `_stack_out` (**O(1)**).
-3. Eliminación final de `_stack_out` (**O(1)**).
-
-El costo promedio por operación tras una secuencia de **N** operaciones es **O(1)**[cite: 1, 7].
+Una transferencia puede costar **O(n)**, pero cada elemento pasa de `_stack_in` a `_stack_out` **a lo sumo una vez** antes de salir de la cola. Así, el costo total de las transferencias se reparte entre las inserciones y extracciones de una secuencia: `pop()` tiene costo **O(1) amortizado**.
 
 ---
 
 # Gestión de Memoria Dinámica
 
-La estructura gestiona memoria dinámica explícita en el _Heap_[cite: 7]:
+La estructura gestiona memoria dinámica explícita en el _heap_ de C++:
 
 - Cada inserción asigna un nuevo nodo mediante `new StackNode(...)`.
 - Cada extracción libera la memoria del nodo retirado mediante `delete temp`.
-- La clase destructora `~AssociativeStack()` recorre y destruye los nodos remanentes al salir de alcance, previniendo fugas de memoria (_memory leaks_).
+- La clase destructora `~AssociativeStack()` recorre y destruye los nodos remanentes al salir de alcance, liberando los nodos que permanezcan al salir de alcance.
 
 ---
 
 # Referencias
 
-1. CP-Algorithms — _Sliding Window Aggregation (SWAG)_.
-2. Manim Community Edition Documentation (`docs.manim.community`)[cite: 1].
-3. 3Blue1Brown — Referencia de diseño y animación pedagógica[cite: 1].
-4. Material de clase CS2023: Semana 3 (Listas y Memoria Dinámica) y Semana 4 (Pilas y Colas), Prof. Víctor Racsó Galván Oyola, UTEC 2026-2.
+1. [USACO Guide — Sliding Window, método de dos pilas](https://usaco.guide/gold/sliding-window). Referencia para agregados de ventana mediante pilas.
+2. [Documentación oficial de Manim Community Edition](https://docs.manim.community/en/stable/). Herramienta utilizada para generar el video.
+3. [3Blue1Brown](https://www.3blue1brown.com/). Referencia visual sugerida por la consigna.
+4. Material de clase CS2023, semanas 3 (listas y memoria dinámica) y 4 (pilas y colas), UTEC 2026-2.

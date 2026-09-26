@@ -6,7 +6,7 @@
 #define IMPLEMENTACION_CPP_ASSOCIATIVEQUEUE_H
 
 #pragma once
-
+#include <iostream>
 #include <functional>
 #include <stdexcept>
 #include <string>
@@ -14,58 +14,72 @@
 #include <algorithm>
 #include "TraceLogger.h"
 
-template<typename data_type>
-struct AssociativeStack {
-    struct StackNode {
+using namespace std;
+
+template <typename data_type>
+struct AssociativeStack
+{
+    struct StackNode
+    {
         data_type val;
         data_type acc;
-        StackNode* next;
+        StackNode *next;
 
-        StackNode(data_type v, data_type a, StackNode* n = nullptr)
+        StackNode(data_type v, data_type a, StackNode *n = nullptr)
             : val(v), acc(a), next(n) {}
     };
 
-    StackNode* _top;
+    StackNode *_top;
     int _size;
 
     AssociativeStack() : _top(nullptr), _size(0) {}
 
-    ~AssociativeStack() {
-        while (!empty()) {
+    ~AssociativeStack()
+    {
+        while (!empty())
+        {
             pop();
         }
     }
 
-    bool empty() const {
+    bool empty() const
+    {
         return _top == nullptr;
     }
 
-    int size() const {
+    int size() const
+    {
         return _size;
     }
 
-    void push(data_type val, data_type acc) {
-        StackNode* new_node = new StackNode(val, acc, _top);
+    void push(data_type val, data_type acc)
+    {
+        StackNode *new_node = new StackNode(val, acc, _top);
         _top = new_node;
         _size++;
     }
 
-    void pop() {
-        if (_top != nullptr) {
-            StackNode* temp = _top;
+    void pop()
+    {
+        if (_top != nullptr)
+        {
+            StackNode *temp = _top;
             _top = _top->next;
             delete temp;
             _size--;
         }
     }
 
-    StackNode* top() const {
+    StackNode *top() const
+    {
         return _top;
     }
 
-    std::vector<StackElement> to_vector() const {
+    std::vector<StackElement> to_vector() const
+    {
         std::vector<StackElement> elems;
-        for (StackNode* curr = _top; curr != nullptr; curr = curr->next) {
+        for (StackNode *curr = _top; curr != nullptr; curr = curr->next)
+        {
             elems.push_back({curr->val, curr->acc});
         }
         std::reverse(elems.begin(), elems.end());
@@ -73,31 +87,36 @@ struct AssociativeStack {
     }
 };
 
-class AssociativeQueue {
+class AssociativeQueue
+{
 private:
     AssociativeStack<int> _stack_in;
     AssociativeStack<int> _stack_out;
     std::function<int(int, int)> op;
     std::string op_symbol;
-    TraceLogger& logger;
+    TraceLogger &logger;
 
-    int combine(int a, int b) const {
+    int combine(int a, int b) const
+    {
         return op(a, b);
     }
 
 public:
-    AssociativeQueue(std::function<int(int, int)> operation, std::string symbol, TraceLogger& log)
+    AssociativeQueue(std::function<int(int, int)> operation, std::string symbol, TraceLogger &log)
         : op(std::move(operation)), op_symbol(std::move(symbol)), logger(log) {}
 
-    bool empty() const {
+    bool empty() const
+    {
         return _stack_in.empty() && _stack_out.empty();
     }
 
-    size_t size() const {
+    size_t size() const
+    {
         return _stack_in.size() + _stack_out.size();
     }
 
-    void push(int x) {
+    void push(int x)
+    {
         int new_acc = _stack_in.empty() ? x : combine(_stack_in.top()->acc, x);
         _stack_in.push(x, new_acc);
 
@@ -107,8 +126,10 @@ public:
                       "Push(" + std::to_string(x) + "): ingresa a _stack_in con acumulado " + std::to_string(new_acc));
     }
 
-    int pop() {
-        if (empty()) {
+    int pop()
+    {
+        if (empty())
+        {
             logger.record("ERROR_POP", 0, false,
                           _stack_in.to_vector(), _stack_out.to_vector(),
                           0, false,
@@ -116,18 +137,25 @@ public:
             throw std::underflow_error("Cola vacia");
         }
 
-        if (_stack_out.empty()) {
+        if (_stack_out.empty())
+        {
             logger.record("START_TRANSFER", 0, false,
                           _stack_in.to_vector(), _stack_out.to_vector(),
                           query(), true,
                           "_stack_out vacia: traspasando elementos invirtiendo acumulados");
 
-            while (!_stack_in.empty()) {
+            while (!_stack_in.empty())
+            {
                 int val = _stack_in.top()->val;
                 _stack_in.pop();
 
                 int new_acc = _stack_out.empty() ? val : combine(val, _stack_out.top()->acc);
                 _stack_out.push(val, new_acc);
+                logger.record("TRANSFER_ITEM", val, true,
+                              _stack_in.to_vector(), _stack_out.to_vector(),
+                              query(), true,
+                              "Se transfiere " + std::to_string(val) +
+                                  " a _stack_out; acumulado = " + std::to_string(new_acc));
             }
 
             logger.record("END_TRANSFER", 0, false,
@@ -150,18 +178,35 @@ public:
         return removed;
     }
 
-    int query() const {
-        if (empty()) {
+    int query() const
+    {
+        if (empty())
+        {
             throw std::underflow_error("Cola vacia, no hay acumulado");
         }
-        if (_stack_in.empty()) {
+        if (_stack_in.empty())
+        {
             return _stack_out.top()->acc;
         }
-        if (_stack_out.empty()) {
+        if (_stack_out.empty())
+        {
             return _stack_in.top()->acc;
         }
         return combine(_stack_out.top()->acc, _stack_in.top()->acc);
     }
+
+    int query_with_trace()
+    {
+        int result = query();
+
+        logger.record("QUERY", 0, false,
+                      _stack_in.to_vector(), _stack_out.to_vector(),
+                      result, true,
+                      "Query(): minimo de todos los elementos = " +
+                          std::to_string(result));
+
+        return result;
+    }
 };
 
-#endif //IMPLEMENTACION_CPP_ASSOCIATIVEQUEUE_H
+#endif // IMPLEMENTACION_CPP_ASSOCIATIVEQUEUE_H
