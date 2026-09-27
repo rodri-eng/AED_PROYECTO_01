@@ -5,16 +5,14 @@
 #ifndef IMPLEMENTACION_CPP_ASSOCIATIVEQUEUE_H
 #define IMPLEMENTACION_CPP_ASSOCIATIVEQUEUE_H
 
-#pragma once
-#include <iostream>
+#include <cstddef>
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 #include <algorithm>
 #include "TraceLogger.h"
-
-using namespace std;
 
 template <typename data_type>
 struct AssociativeStack
@@ -33,6 +31,9 @@ struct AssociativeStack
     int _size;
 
     AssociativeStack() : _top(nullptr), _size(0) {}
+
+    AssociativeStack(const AssociativeStack &) = delete;
+    AssociativeStack &operator=(const AssociativeStack &) = delete;
 
     ~AssociativeStack()
     {
@@ -110,7 +111,7 @@ public:
         return _stack_in.empty() && _stack_out.empty();
     }
 
-    size_t size() const
+    std::size_t size() const
     {
         return _stack_in.size() + _stack_out.size();
     }
