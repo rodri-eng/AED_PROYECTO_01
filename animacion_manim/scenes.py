@@ -198,7 +198,7 @@ class AssociativeQueueScene(Scene):
                 self.play(*anim_list, run_time=0.8)
 
             elif op == "TRANSFER_ITEM":
-                # The last IN card represents the element just transferred.
+                # La última tarjeta de IN representa el elemento recién transferido.
                 moving_mob = current_in_mobjects.pop()
 
                 out_data = step["stack_out"]

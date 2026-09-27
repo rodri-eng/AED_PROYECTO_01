@@ -1,4 +1,4 @@
-"""Check that the rendered demo's trace follows the C++ queue contract."""
+"""Comprueba que la traza de la demostración respete el contrato de la cola en C++."""
 
 import json
 from pathlib import Path
@@ -16,9 +16,9 @@ def validate_trace(path):
     removed = []
 
     for number, step in enumerate(steps, start=1):
-        assert step["step"] == number, f"step {number}: wrong sequence number"
+        assert step["step"] == number, f"paso {number}: número de secuencia incorrecto"
         op = step["op"]
-        assert op in expected_ops, f"step {number}: unknown op {op}"
+        assert op in expected_ops, f"paso {number}: operación desconocida {op}"
         assert isinstance(step["desc"], str)
 
         if op == "ERROR_POP":
@@ -53,21 +53,21 @@ def validate_trace(path):
             assert in_stack and out_stack and transfer_remaining is None
             assert step["value"] is None
 
-        assert step["stack_in"] == in_stack, f"step {number}: IN snapshot mismatch"
-        assert step["stack_out"] == out_stack, f"step {number}: OUT snapshot mismatch"
+        assert step["stack_in"] == in_stack, f"paso {number}: estado de IN incorrecto"
+        assert step["stack_out"] == out_stack, f"paso {number}: estado de OUT incorrecto"
         values = [item["val"] for item in in_stack + out_stack]
         expected_min = min(values) if values else None
-        assert step["total_agg"] == expected_min, f"step {number}: aggregate mismatch"
+        assert step["total_agg"] == expected_min, f"paso {number}: acumulado incorrecto"
 
     assert transfer_remaining is None
-    assert len(steps) == 18, "canonical demo must contain 18 steps"
+    assert len(steps) == 18, "la demostración debe contener 18 pasos"
     assert [step["op"] for step in steps].count("TRANSFER_ITEM") == 4
     assert [step["op"] for step in steps].count("QUERY") == 1
-    assert removed == [8, 3, 5, 2], "queue order is not FIFO"
+    assert removed == [8, 3, 5, 2], "el orden de salida no respeta FIFO"
     assert not in_stack and not out_stack
     return len(steps)
 
 
 if __name__ == "__main__":
     count = validate_trace(Path(__file__).with_name("trace.json"))
-    print(f"Valid trace: {count} steps, 4 transfers, 1 query, FIFO preserved")
+    print(f"Traza válida: {count} pasos, 4 transferencias, 1 consulta; orden FIFO conservado")

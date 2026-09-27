@@ -11,7 +11,7 @@ static_assert(!std::is_copy_constructible_v<AssociativeQueue>);
 
 void require(bool condition) {
     if (!condition) {
-        throw std::runtime_error("AssociativeQueue contract failed");
+        throw std::runtime_error("Se incumplió el contrato de AssociativeQueue");
     }
 }
 
@@ -38,8 +38,8 @@ int main() {
     require(queue.pop() == 5);
     require(queue.pop() == 2 && queue.empty());
 
-    // Projection operations are associative but not commutative, so they
-    // verify that aggregation respects the queue's front-to-back order.
+    // Las operaciones de proyección son asociativas, pero no conmutativas;
+    // permiten verificar que el agregado respete el orden de la cola.
     AssociativeQueue first([](int a, int) { return a; }, "first", logger);
     first.push(8);
     first.push(3);
@@ -59,9 +59,9 @@ int main() {
     require(last.query() == 2);
 
     TraceLogger escaped_logger("trace_logger_test.json");
-    escaped_logger.record("TEST", 0, false, {}, {}, 0, false, "quote \" and newline\n");
+    escaped_logger.record("TEST", 0, false, {}, {}, 0, false, "comilla \" y salto de linea\n");
     escaped_logger.save();
     std::ifstream saved("trace_logger_test.json");
     std::string json((std::istreambuf_iterator<char>(saved)), std::istreambuf_iterator<char>());
-    require(json.find("quote \\\" and newline\\n") != std::string::npos);
+    require(json.find("comilla \\\" y salto de linea\\n") != std::string::npos);
 }
