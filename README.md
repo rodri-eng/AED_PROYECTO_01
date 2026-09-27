@@ -10,11 +10,11 @@ La animación se alimenta de una traza de ejecución (`trace.json`) generada por
 
 # Integrantes e Información Institucional
 
-| Información     | Detalle                                                                                        |
-| :-------------- | :--------------------------------------------------------------------------------------------- |
-| **Institución** | Universidad de Ingeniería y Tecnología (UTEC)                                                  |
-| **Curso**       | CS2023 Algoritmos y Estructuras de Datos                                                       |
-| **Docente**     | Prof. Víctor Racsó Galván Oyola (`vgalvan@utec.edu.pe`)                                        |
+| Información     | Detalle                                                                                         |
+| :-------------- | :---------------------------------------------------------------------------------------------- |
+| **Institución** | Universidad de Ingeniería y Tecnología (UTEC)                                                   |
+| **Curso**       | CS2023 Algoritmos y Estructuras de Datos                                                        |
+| **Docente**     | Prof. Víctor Racsó Galván Oyola (`vgalvan@utec.edu.pe`)                                         |
 | **Integrantes** | Huertos Ochoa, Rodrigo Franco • Ramos Vargas, Royer Sebastián • Rosario Palomino, Diego Antonio |
 
 ---
@@ -57,7 +57,7 @@ La cola se implementa mediante dos pilas de nodos enlazados, sin usar `std::stac
                  Associative Queue
               ┌──────────────────────┐
               │                      │
-              │   query() / fold()   │
+              │        query()       │
               │                      │
               └──────────┬───────────┘
                          │

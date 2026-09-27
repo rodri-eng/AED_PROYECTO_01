@@ -295,7 +295,7 @@ class AssociativeQueueScene(Scene):
         ).next_to(c1, DOWN, buff=0.3).align_to(c1, LEFT)
 
         c3 = Text(
-            "- Query / Fold: O(1) estricto en el peor caso",
+            "- Query: O(1) estricto en el peor caso",
             font_size=22
         ).next_to(c2, DOWN, buff=0.3).align_to(c1, LEFT)
 
