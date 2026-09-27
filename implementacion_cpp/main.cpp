@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     {
         q.pop();
     }
-    catch (...)
+    catch (const std::underflow_error &)
     {
     }
 
@@ -42,7 +42,15 @@ int main(int argc, char *argv[])
     q.pop();
     q.pop();
 
-    logger.save();
+    try
+    {
+        logger.save();
+    }
+    catch (const std::exception &error)
+    {
+        std::cerr << "Error al guardar la traza: " << error.what() << std::endl;
+        return 1;
+    }
     std::cout << "Proceso completado exitosamente." << std::endl;
 
     return 0;

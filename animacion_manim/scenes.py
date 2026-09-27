@@ -40,11 +40,11 @@ class AssociativeQueueScene(Scene):
             Text("Acc = mínimo parcial guardado en cada pila.", font_size=25),
             Text("query obtiene el agregado de todos sus elementos.", font_size=25),
             Text("min(min(a, b), c) = min(a, min(b, c))", font_size=24, color=YELLOW),
-            Text("Ejemplo: hallar el mínimo de una ventana de datos.", font_size=25),
+            Text("Uso: mínimo en una ventana deslizante (sliding window).", font_size=25),
         ).arrange(DOWN, buff=0.35).move_to(ORIGIN)
 
         self.play(FadeIn(intro))
-        self.wait(7)
+        self.wait(10)
         self.play(FadeOut(intro))
 
         json_path = os.path.join(os.path.dirname(__file__), "trace.json")
@@ -198,7 +198,7 @@ class AssociativeQueueScene(Scene):
                 self.play(*anim_list, run_time=0.8)
 
             elif op == "TRANSFER_ITEM":
-                # El último objeto de IN representa el tope que acaba de salir.
+                # The last IN card represents the element just transferred.
                 moving_mob = current_in_mobjects.pop()
 
                 out_data = step["stack_out"]
@@ -225,21 +225,27 @@ class AssociativeQueueScene(Scene):
                 self.play(*anim_list, run_time=0.5)
 
             elif op == "QUERY":
-                out_acc = step["stack_out"][-1]["acc"]
-                in_acc = step["stack_in"][-1]["acc"]
+                out_data = step["stack_out"]
+                in_data = step["stack_in"]
+                if out_data and in_data:
+                    formula_text = f"min({out_data[-1]['acc']}, {in_data[-1]['acc']}) = {total_agg}"
+                elif out_data:
+                    formula_text = f"min(OUT) = {total_agg}"
+                else:
+                    formula_text = f"min(IN) = {total_agg}"
 
                 formula = Text(
-                    f"min({out_acc}, {in_acc}) = {total_agg}",
+                    formula_text,
                     font_size=26,
                     color=YELLOW
                 ).move_to(ORIGIN)
 
-                self.play(
-                    *anim_list,
-                    Indicate(current_out_mobjects[-1]),
-                    Indicate(current_in_mobjects[-1]),
-                    run_time=1.2
-                )
+                highlighted = []
+                if current_out_mobjects:
+                    highlighted.append(Indicate(current_out_mobjects[-1]))
+                if current_in_mobjects:
+                    highlighted.append(Indicate(current_in_mobjects[-1]))
+                self.play(*anim_list, *highlighted, run_time=1.2)
                 self.play(FadeIn(formula))
                 self.wait(2)
                 self.play(FadeOut(formula))
@@ -258,7 +264,7 @@ class AssociativeQueueScene(Scene):
                 else:
                     self.play(*anim_list, run_time=0.5)
 
-            self.wait(0.5)
+            self.wait(1.5)
 
         self.play(
             FadeOut(desc_text),
@@ -269,6 +275,7 @@ class AssociativeQueueScene(Scene):
             FadeOut(agg_box),
             FadeOut(agg_title),
             FadeOut(agg_val_text),
+            *[FadeOut(card) for card in current_in_mobjects + current_out_mobjects],
         )
 
         complexity_title = Text(

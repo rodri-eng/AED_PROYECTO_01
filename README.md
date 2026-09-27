@@ -2,7 +2,7 @@
 
 Proyecto educativo para el curso **CS2023 Algoritmos y Estructuras de Datos (2026-2)** de la **Universidad de Ingeniería y Tecnología (UTEC)**.
 
-Este proyecto implementa y anima una **Associative Queue (Sliding Window Aggregation - SWAG)** utilizando una implementación real en **C++20** y una animación programática generada con **Manim Community Edition (Python)**, siguiendo el estilo visual pedagógico de **3Blue1Brown**.
+Este proyecto implementa y anima una **Associative Queue (Sliding Window Aggregation - SWAG)** utilizando una implementación real en **C++17** y una animación programática generada con **Manim Community Edition (Python)**, siguiendo el estilo visual pedagógico de **3Blue1Brown**.
 
 La animación se alimenta de una traza de ejecución (`trace.json`) generada por el programa en C++, garantizando que todas las operaciones mostradas correspondan al comportamiento real de la estructura de datos.
 
@@ -15,7 +15,7 @@ La animación se alimenta de una traza de ejecución (`trace.json`) generada por
 | **Institución** | Universidad de Ingeniería y Tecnología (UTEC)                                                  |
 | **Curso**       | CS2023 Algoritmos y Estructuras de Datos                                                       |
 | **Docente**     | Prof. Víctor Racsó Galván Oyola (`vgalvan@utec.edu.pe`)                                        |
-| **Integrantes** | Huertos Ochoa, Rodrigo Franco • Ramos Vargas, Royer Sebastian Diego • Antonio Rosario Palomino |
+| **Integrantes** | Huertos Ochoa, Rodrigo Franco • Ramos Vargas, Royer Sebastián • Rosario Palomino, Diego Antonio |
 
 ---
 
@@ -132,22 +132,24 @@ proyecto_01/
 │   ├── AssociativeQueue.h      # Pila y cola asociativa implementadas con nodos enlazados
 │   ├── TraceLogger.h           # Serializador de eventos a formato JSON
 │   ├── main.cpp                # Simulación de operaciones y casos de prueba
+│   ├── tests/                  # Pruebas CTest del TDA y la serialización
 │   └── CMakeLists.txt          # Configuración de compilación para CLion / CMake
 │
 ├── animacion_manim/
 │   ├── scenes.py               # Script de animación con Manim CE
 │   ├── trace.json              # Registro de estados generado por C++
+│   ├── verify_trace.py         # Valida la traza real y el orden FIFO
 │   └── requirements.txt        # Dependencias de Python (manim)
 │
 ├── .gitignore                  # Exclusiones de Git (builds, cache, temporales)
-└── README.MD                   # Documentación técnica del proyecto
+└── README.md                   # Documentación técnica del proyecto
 ```
 
 ---
 
 # Requisitos del Sistema
 
-- **Compilador C++:** Compatible con **C++20** (`g++`, `clang++` o MSVC) y **CMake 4.0+**.
+- **Compilador C++:** Compatible con **C++17** (`g++`, `clang++` o MSVC) y **CMake 3.20+**.
 - **Python:** Versión **3.9 o superior**.
 - **FFmpeg:** Requerido por Manim para la codificación y exportación de video.
 
@@ -187,10 +189,23 @@ brew install ffmpeg
 ```bash
 cd implementacion_cpp
 
-g++ -std=c++20 main.cpp -o engine
+g++ -std=c++17 main.cpp -o engine
 
 ./engine ../animacion_manim/trace.json
 ```
+
+Alternativa con CMake, desde la raíz del repositorio:
+
+```bash
+cmake -S implementacion_cpp -B cmake-build-local
+cmake --build cmake-build-local
+ctest --test-dir cmake-build-local --output-on-failure
+./cmake-build-local/implementacion_cpp animacion_manim/trace.json
+python animacion_manim/verify_trace.py
+```
+
+En Windows, el ejecutable puede llamarse `implementacion_cpp.exe` o estar en
+`cmake-build-local/Debug/`, según el generador de CMake.
 
 ## 2. Configurar el Entorno de Animación (Python)
 

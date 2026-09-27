@@ -9,3 +9,7 @@ __pycache__/
 media/
 *.pyc
 .venv/
+
+# Local agent instructions and planning notes
+AGENTS.md
+.atl/

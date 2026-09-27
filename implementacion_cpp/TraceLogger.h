@@ -11,6 +11,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdexcept>
+#include <utility>
 
 struct StackElement {
     int val;
@@ -33,6 +35,31 @@ class TraceLogger {
 private:
     std::string filepath;
     std::vector<TraceStep> steps;
+
+    static std::string escapeJson(const std::string& input) {
+        static const char hex[] = "0123456789abcdef";
+        std::string escaped;
+        for (unsigned char character : input) {
+            switch (character) {
+                case '"': escaped += "\\\""; break;
+                case '\\': escaped += "\\\\"; break;
+                case '\b': escaped += "\\b"; break;
+                case '\f': escaped += "\\f"; break;
+                case '\n': escaped += "\\n"; break;
+                case '\r': escaped += "\\r"; break;
+                case '\t': escaped += "\\t"; break;
+                default:
+                    if (character < 0x20) {
+                        escaped += "\\u00";
+                        escaped += hex[character >> 4];
+                        escaped += hex[character & 0x0f];
+                    } else {
+                        escaped += static_cast<char>(character);
+                    }
+            }
+        }
+        return escaped;
+    }
 
 public:
     explicit TraceLogger(std::string path) : filepath(std::move(path)) {}
@@ -57,8 +84,7 @@ public:
     void save() {
         std::ofstream out(filepath);
         if (!out.is_open()) {
-            std::cerr << "Error: No se pudo abrir el archivo " << filepath << std::endl;
-            return;
+            throw std::runtime_error("No se pudo abrir el archivo de traza: " + filepath);
         }
 
         out << "[\n";
@@ -66,7 +92,7 @@ public:
             const auto& s = steps[i];
             out << "  {\n";
             out << "    \"step\": " << s.step << ",\n";
-            out << "    \"op\": \"" << s.op << "\",\n";
+            out << "    \"op\": \"" << escapeJson(s.op) << "\",\n";
             out << "    \"value\": " << (s.has_value ? std::to_string(s.value) : "null") << ",\n";
 
             out << "    \"stack_in\": [";
@@ -84,11 +110,14 @@ public:
             out << "],\n";
 
             out << "    \"total_agg\": " << (s.has_agg ? std::to_string(s.total_agg) : "null") << ",\n";
-            out << "    \"desc\": \"" << s.desc << "\"\n";
+            out << "    \"desc\": \"" << escapeJson(s.desc) << "\"\n";
             out << "  }" << (i + 1 < steps.size() ? ",\n" : "\n");
         }
         out << "]\n";
         out.close();
+        if (!out) {
+            throw std::runtime_error("No se pudo escribir el archivo de traza: " + filepath);
+        }
         std::cout << "Archivo de traza guardado en: " << filepath << std::endl;
     }
 };
